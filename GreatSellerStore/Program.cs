@@ -1,3 +1,9 @@
+using GreatSellerStore.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.SqlServer;
+using Microsoft.AspNetCore.Identity;
+using GreatSellerStore.Models;
+
 namespace GreatSellerStore
 {
     public class Program
@@ -6,7 +12,13 @@ namespace GreatSellerStore
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+            builder.Services.AddDbContext<ApplicationDBContext>(options => options.UseSqlServer(connectionString));
+
+
+            builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddEntityFrameworkStores<ApplicationDBContext>(); 
+
             builder.Services.AddRazorPages();
 
             var app = builder.Build();
@@ -23,6 +35,7 @@ namespace GreatSellerStore
             app.UseStaticFiles();
 
             app.UseRouting();
+                        app.UseAuthentication();;
 
             app.UseAuthorization();
 
